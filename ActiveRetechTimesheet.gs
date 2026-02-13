@@ -37,3 +37,25 @@ function getCalendarEvents(startDate, endDate) {
     .filter(function(e) { return !e.isAllDayEvent(); })
     .sort(function(a, b) { return a.getStartTime() - b.getStartTime(); });
 }
+
+/**
+ * Writes header section (rows 1-4): month date, title, and column headers.
+ */
+function writeHeader(sheet, monthStart) {
+  sheet.getRange('B1').setValue(monthStart);
+  sheet.getRange('B1').setNumberFormat('yyyy-mm-dd');
+
+  const titleRange = sheet.getRange('D2:G2');
+  titleRange.merge();
+  titleRange.setValue('作業報告書');
+  titleRange.setFontWeight('bold');
+  titleRange.setHorizontalAlignment('center');
+
+  const headers = ['日付', '曜日', '出社時間', '退社時間', '休憩時間', '勤務時間', '作業内容'];
+  const headerRange = sheet.getRange('B4:H4');
+  headerRange.setValues([headers]);
+  headerRange.setBackground(HEADER_BG_COLOR);
+  headerRange.setFontColor('#FFFFFF');
+  headerRange.setFontSize(9);
+  headerRange.setHorizontalAlignment('center');
+}
