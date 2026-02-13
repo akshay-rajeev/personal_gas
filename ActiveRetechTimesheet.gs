@@ -90,3 +90,18 @@ function writeEventRows(sheet, events) {
   });
   return startRow + events.length - 1;
 }
+
+/**
+ * Writes totals row with "計" label and SUM of working hours.
+ */
+function writeTotalsRow(sheet, lastDataRow) {
+  const totalRow = lastDataRow + 1;
+  sheet.getRange('B' + totalRow).setValue('計');
+  sheet.getRange('G' + totalRow).setFormula('=SUM(G5:G' + lastDataRow + ')');
+  sheet.getRange('G' + totalRow).setNumberFormat('h:mm');
+
+  const range = sheet.getRange('B' + totalRow + ':H' + totalRow);
+  range.setBackground(HEADER_BG_COLOR);
+  range.setFontColor('#FFFFFF');
+  range.setFontWeight('bold');
+}
