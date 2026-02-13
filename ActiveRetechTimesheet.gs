@@ -111,7 +111,7 @@ function writeTotalsRow(sheet, lastDataRow) {
 /**
  * Generates timesheet for the current month from default calendar events.
  */
-function generateTimesheet() {
+function activeRetechTimesheet() {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -132,4 +132,24 @@ function generateTimesheet() {
 
   sheet.autoResizeColumns(2, 7);
   Logger.log('Timesheet created: ' + sheetName + ' — ' + spreadsheet.getUrl());
+}
+
+/**
+ * Creates a daily trigger for activeRetechTimesheet. Run this once manually to set it up.
+ */
+function installActiveRetechTimesheetTrigger() {
+  // Remove any existing triggers for activeRetechTimesheet to avoid duplicates
+  ScriptApp.getProjectTriggers().forEach(function(trigger) {
+    if (trigger.getHandlerFunction() === 'activeRetechTimesheet') {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+
+  ScriptApp.newTrigger('activeRetechTimesheet')
+    .timeBased()
+    .everyDays(1)
+    .atHour(23)
+    .create();
+
+  Logger.log('Daily trigger installed — activeRetechTimesheet will run every day at ~23:00.');
 }
