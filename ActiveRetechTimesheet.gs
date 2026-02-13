@@ -59,3 +59,34 @@ function writeHeader(sheet, monthStart) {
   headerRange.setFontSize(9);
   headerRange.setHorizontalAlignment('center');
 }
+
+/**
+ * Writes one row per event starting at row 5. Applies alternating row colors.
+ * Returns the last data row number.
+ */
+function writeEventRows(sheet, events) {
+  const startRow = 5;
+  events.forEach(function(event, i) {
+    const row = startRow + i;
+    const start = event.getStartTime();
+    const end = event.getEndTime();
+    const rowData = [
+      start,
+      DAY_LABELS[start.getDay()],
+      start,
+      end,
+      '0:00',
+      '=E' + row + '-D' + row,
+      event.getTitle()
+    ];
+    const range = sheet.getRange('B' + row + ':H' + row);
+    range.setValues([rowData]);
+
+    sheet.getRange('B' + row).setNumberFormat('yyyy-mm-dd');
+    sheet.getRange('D' + row + ':G' + row).setNumberFormat('h:mm');
+
+    const bgColor = (i % 2 === 1) ? ALT_ROW_COLOR : '#FFFFFF';
+    range.setBackground(bgColor);
+  });
+  return startRow + events.length - 1;
+}
