@@ -42,8 +42,8 @@ function getCalendarEvents(startDate, endDate) {
  * Writes header section (rows 1-4): month date, title, and column headers.
  */
 function writeHeader(sheet, monthStart) {
-  sheet.getRange('B1').setValue(monthStart);
-  sheet.getRange('B1').setNumberFormat('yyyy-mm-dd');
+  const b1Label = monthStart.getFullYear() + '年' + (monthStart.getMonth() + 1) + '月';
+  sheet.getRange('B1').setValue(b1Label);
 
   const titleRange = sheet.getRange('D2:G2');
   titleRange.merge();
@@ -130,6 +130,7 @@ function activeRetechTimesheet() {
   const lastDataRow = writeEventRows(sheet, events);
   writeTotalsRow(sheet, lastDataRow);
 
+  SpreadsheetApp.flush();
   sheet.autoResizeColumns(2, 7);
   Logger.log('Timesheet created: ' + sheetName + ' — ' + spreadsheet.getUrl());
 }
