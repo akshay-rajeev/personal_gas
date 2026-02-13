@@ -105,3 +105,31 @@ function writeTotalsRow(sheet, lastDataRow) {
   range.setFontColor('#FFFFFF');
   range.setFontWeight('bold');
 }
+
+// === Main ===
+
+/**
+ * Generates timesheet for the current month from default calendar events.
+ */
+function generateTimesheet() {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+  const events = getCalendarEvents(monthStart, monthEnd);
+  if (events.length === 0) {
+    Logger.log('No events found for this month.');
+    return;
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetName = getSheetName(now);
+  const sheet = getOrCreateSheet(spreadsheet, sheetName);
+
+  writeHeader(sheet, monthStart);
+  const lastDataRow = writeEventRows(sheet, events);
+  writeTotalsRow(sheet, lastDataRow);
+
+  sheet.autoResizeColumns(2, 7);
+  Logger.log('Timesheet created: ' + sheetName + ' — ' + spreadsheet.getUrl());
+}
